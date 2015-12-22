@@ -1,6 +1,4 @@
-node_modules
+_site
 .sass-cache
-*~
-build
-*.css
-*.map
+node_modules
+Gemfile.lock
