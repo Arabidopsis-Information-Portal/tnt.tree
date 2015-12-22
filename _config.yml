@@ -861,22 +861,23 @@ api :
                             .text (...)
                         );
 
-    - name : Input trees
-      preamble : |
-        TnT has several methods to convert string based trees to tnt.tree.node's. See below for a descrition of the supported methods
-      example : |
-        var tree = tnt.tree.parse_newick (newick);
-        var tree2 = tnt.tree.parse_nhx (nhx);
+           - name : Input trees
+             preamble : |
+                TnT has several methods to convert string based trees to tnt.tree.node's. See below for a descrition of the supported methods
+             example : |
+                var tree = tnt.tree.parse_newick (newick);
+                var tree2 = tnt.tree.parse_nhx (nhx);
 
-      elements :
-          - name : parse_newick
-            path : tnt.tree
-            args : string
-            desc : parses newick formatted trees
-            full : Parses newick formatted trees. This method returns a nested object that can be passed directly to a tree visualisation using its <a href="#data">data</a> method.
+             elements :
+                 - name : parse_newick
+                   path : tnt.tree
+                   args : string
+                   desc : parses newick formatted trees
+                   full : Parses newick formatted trees. This method returns a nested object that can be passed directly to a tree visualisation using its <a href="#data">data</a> method.
 
-          - name : parse_nhx
-            path : tnt.tree
-            args : string
-            desc : parses nhx formatted trees
-            full : Parses nhx formatted trees. This method returns a nested object that can be passed directly to a tree visualisation using its <a href="#data">data</a> method.
+
+                 - name : parse_nhx
+                   path : tnt.tree
+                   args : string
+                   desc : parses nhx formatted trees
+                   full : Parses nhx formatted trees. This method returns a nested object that can be passed directly to a tree visualisation using its <a href="#data">data</a> method.
