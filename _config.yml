@@ -8,7 +8,7 @@ api :
       elements :
            - name : Tree Visualization
              preamble : |
-                        Trees can be created using the <a href="#tree">tnt.tree</a> method. The returned <i>tree</i> is configurable via the methods explained below. An example of use looks like:
+                        New trees visualisations can be created using the <a href="#tree">tnt.tree</a> method. The returned tree visualisation is configurable via the methods explained below. An example of use looks like:
              example : |
                 var mytree = tnt.tree()
                     .data (tnt.tree.parse_newick (newick))
@@ -24,7 +24,7 @@ api :
                   path : tnt
                   args : null
                   desc : creates a new tree visualization
-                  full : Creates a new tree visualization that can be configured using the methods explained below. The returned object is a function itself that can be called passing a DOM element as its argument. This DOM element is used as a container for the visualization.
+                  full : Creates a new tree visualization that can be configured using the methods explained below. The returned visualisation is a function itself that can be called passing a <i>DOM element</i> as its argument and is used as a container for the visualization. The tree is only rendered when the visualisation is called.
                   example : |
                     var mytree = tnt.tree()
                     mytree (document.getElementById ('my_div'));
@@ -33,7 +33,7 @@ api :
                   path : tree
                   args : object
                   desc : sets the tree data (javascript object)
-                  full : Sets the data to be used in the tree visualization (the tree object). This tree needs to be a tree like structure in JSON format like the one shown below. This JSON object can be obtained with <a href="#parse_newick">tnt.tree.parse_json</a> or <a href="#parse_nhx">tnt.tree.parse_nhx</a>
+                  full : Sets the data to be used in the tree visualization (the tree). This tree needs to be a tree like structure in JSON format like the one shown below. This JSON object can be obtained with <a href="#parse_newick">tnt.tree.parse_json</a> or <a href="#parse_nhx">tnt.tree.parse_nhx</a>
                   example : |
                     var tree_obj = {
                         name: "F",
@@ -57,18 +57,18 @@ api :
                   path : tree
                   args : integer
                   desc : specifies duration of the tree transitions
-                  full : Specifies the duration of the transitions on trees. If no argument is provided it returns the current duration. By default this value is 500ms
+                  full : Specifies the duration of the transitions when the tree is <a href="#update">udpated</a>. If no argument is provided it returns the current duration. By default this value is 750 ms.
                   example : |
                     var tree_vis = tnt.tree()
-                        .duration(750);
+                        .duration(1000);
 
-                    tree_vis.duration(); // returns 750
+                    tree_vis.duration(); // returns 1000
 
-                - name : on.
+                - name : update
                   path : tree
-                  args : string, callback
-                  desc : adds an event listener to each node
-                  full : Adds an event listener to each node. Its first argument is a string with the event name. <i>click</i>, <i>dblclick</i>, <i>mouseover</i> and <i>mouseout</i> are accepted. The second argument is a callback that receives the <a href="#Node">tnt.tree.node</a> as its argument and is executed when the event is fired.
+                  args : null
+                  desc : updates the tree visualisation
+                  full : Updates the tree visualisation. This means that the visualisation is re-initialised using the current state. For example, if a change in the <a href="#Label">labels</a> or the <a href="Node display">node's display</a> is performed, the changes are not rendered until this method is called.
                   example : |
                     var tree_vis = tnt.tree();
 
@@ -78,12 +78,31 @@ api :
                         tree_vis.update();
                     });
 
+                - name : update_nodes
+                  path : tree
+                  args : null
+                  desc : updates the nodes and labels of a tree visualisation
+                  full : Updates the <a href="#Node display">node display</a> and <a href="#Label">labels</a> of the tree visualisation. The main difference with the <a href="#update">update</a> method is that update_nodes doesn't recompute the tree layout and only a more performant update of the aspect of nodes and labels are performed.
+
+                - name : on.
+                  path : tree
+                  args : string, callback
+                  desc : adds an event listener to each node in the tree visualisation
+                  full : Adds an event listener to each node in the tree visualisation. Its first argument is a string with the event name. <i>click</i>, <i>dblclick</i>, <i>mouseover</i> and <i>mouseout</i> are accepted. The second argument is a callback that receives the clicked <a href="#Node">node</a> as its argument and is executed when the event is fired.
+                  example : |
+                    var tree_vis = tnt.tree();
+
+                    // collapse node on click
+                    tree_vis.on("click", function (node) {
+                        node.toggle();
+                        tree_vis.update();
+                    });
 
                 - name : root
                   path : tree
                   args : tnt.tree.node
-                  desc : sets the root node (tnt.tree.node) of the tree used in the visualization
-                  full : Sets the root <a href="#Node">node</a> of the tree used in the visualization. This object is used to manipulate and query the tree in different ways (see below for the supported methods). If called without arguments, the current root <a href="#Node">tnt.tree.node</a> is returned.
+                  desc : sets the root node of the tree used in the visualization
+                  full : Sets the root <a href="#Node">node</a> of the tree used in the visualization. If called without arguments, the current <a href="#Node">root</a> is returned.
                   example : |
                     var tree_vis = tnt.tree()
                         .data (tnt.tree.parse_newick (newick));
@@ -94,8 +113,8 @@ api :
                 - name : branch_color
                   path : tree
                   args : string | callback
-                  desc : specifies the color of branches
-                  full : Specifies the color of the branches in the tree. This color can be given as a string specifying the name of the color (like "blue") or its hexadecimal code (like '#00FF00'). To get per branch colors use a callback instead. This callback will be called on each branch with the source and destination <a href="#Node">tnt.tree.nodes</a> as arguments. By default branches are black.
+                  desc : specifies the color of branches in the tree
+                  full : Specifies the color of the branches in the tree. This color can be given as a string name (like "blue") or its hexadecimal code (like '#00FF00'). To get per branch colors use a callback instead. This callback will be called on each branch with the source and destination <a href="#Node">nodes</a> as arguments. By default branches are displayed black. If called without arguments the current value is returned.
                   example : |
                     var tree_vis = tnt.tree()
                         .branch_color (function (source, target) {
@@ -116,64 +135,28 @@ api :
                             return color;
                         });
 
-                - name : node_display
-                  path : tree
-                  args : tnt.tree.node_display
-                  desc : specifies the shape, size and color of nodes
-                  full : Specifies the shape, size and color of nodes as a <a href="#node_display">tnt.tree.node_display</a> object. If called without arguments the current <a href="#node_display">tnt.tree.node_display</a> object is returned. By default black circles of size 4.5 pixels are displayed.
-                  example : |
-                    var tree_vis = tnt.tree()
-                        .node_display (tnt.tree.node_display.circle()
-                            .size(5)
-                            .fill("blue")
-                        );
-
-                - name : label
-                  path : tree
-                  args : tnt.tree.label
-                  desc : specifies the label type to be used in the tree visualization
-                  full : Specifies the label to be used in the tree visualization. Accepts an argument of type tnt.tree.label. Returns the current label object if called without arguments. By default, a <a href="#text">tnt.tree.label.text</a> is used displaying the <i>name</i> field of the node.
-                  example : |
-                    var tree_vis = tnt.tree()
-                        .data(...)
-                        .label (tnt.tree.label.text()
-                            .height(30)
-                            .text (function (node) {
-                                return node.property("scientific_name");
-                            })
-                        );
-
-                - name : layout
-                  path : tree
-                  args : tnt.tree.layout
-                  desc : specifies the layout to be used in the tree visualization
-                  full : Specifies the layout to be used in the tree visualization. Accepts an optional argument of type tnt.tree.layout. If called without arguments, returns the current layout object
-                  example : |
-                    var tree_vis = tnt.tree()
-                        .layout (tnt.tree.layout.vertical());
 
            - name : Node
              preamble : |
-                        TnT provides several methods for tree manipulation, these include nodes searching, mapping callbacks to nodes, etc. TnT provides a special object (tnt.tree.node) for these operations. These objects can be obtained using the <a href="#root">root</a> method on the tree visualization object. Since the tree data object is separated from the visualization, it is also possible to use them directly using the <i>tnt.tree.node</i> object in tnt. For example
+                TnT Tree provides several methods for tree manipulation, these include node searching, mapping callbacks to nodes, calculating the lowest common ancestor of a set of nodes or getting a subtree, for example. The root node of a tree can be obtained using the <a href="#tree.root">root</a> method on the tree visualization. It is also possible to create new <a href="Nodes">nodes</a> from a tree data structure using the <a href="tnt.tree.node">tnt.tree.node</a> function. See below for an example.
              example : |
                 // Create a tnt.tree.node from a json object:
-                var jsonObj = {
+                var json = {
                     "name" : "root",
                     "children" : [ {"name" : "leaf1"}, {"name" : "leaf2"} ]
                 };
 
-                var root = tnt.tree.node (jsonObj);
-                var leaves = root.get_all_leaves();
+                var root = tnt.tree.node (json);
+                var leaves = root.get_all_leaves(); // returns an array of leaves
 
-                // Set this tree for visualization
-
+                // Sets this tree for visualization
                 var tree_vis = tnt.tree()
                     .root (root);
 
-                // Or create the tnt.tree.node object implicitely
+                // Sets a new root for the tree visualisation implicitely
                 var tree_vis = tnt.tree()
                     .data (tree.parse_newick ("((human, chimp), mouse)"))
-                var root = tree_vis.root(); // getter
+                var root = tree_vis.root(); // gets the new root node
 
                 // get the node with name 'human' and 'mouse'
                 var human_node = root.find_node_by_name ('human');
@@ -189,8 +172,8 @@ api :
                 - name : node
                   path : tnt.tree
                   args : object
-                  desc : creates a new <i>tnt.tree.node</i> object
-                  full : Creates a new <a href="#Node">tnt.tree.node</a> object.
+                  desc : creates a new TnT Tree Node
+                  full : Creates a new <a href="#Node">TnT Tree Node</a> from the JSON object provided as its argument. This object is expected to be a nested JSON with a <i>children</i> property whose value is an array of children nodes. <a href="tnt.tree.parse_newick">tnt.tree.parse_newick</a> and <a href="tnt.tree.parse_nhx">tnt.tree.parse_nhx</a> returns an object of these characteristics.
                   example : |
                     var node = tnt.tree.node (tnt.tree.parse_newick (newick));
                     var tree_object = node.data();
@@ -198,8 +181,8 @@ api :
                 - name : data
                   path : node
                   args : object
-                  desc : re-sets the tree JSON object of a tnt.tree.node object
-                  full : Re-sets the tree JSON object. If called without arguments returns the current tree data object. This method can not be used to first set the data for a tnt.tree.node (see the example below)
+                  desc : sets a new tree JSON object in the current node
+                  full : sets a new tree JSON object in the current node. If called without arguments returns the current tree data object. This method can not be used to first set the data for a <a href=#tnt.tree.node>node</a> (see the example below)
                   example : |
                     var root = tnt.tree.node (tnt.tree.parse_newick (newick));
 
@@ -217,7 +200,7 @@ api :
                   path : node
                   args : callbak, boolean
                   desc : retrieves a node based on a given condition
-                  full : Retrieves a node based on a given condition. This method accepts two parameters. The first one is a callback that is called for every node. This callback is expected to accept a tnt.tree.node object and return <i>true</i> or <i>false</i>. The method returns the first node (tnt.tree.node) for which the condition is <i>true</i>. Use <a href="">#find_all</a> to get all the nodes satisfying the condition. The second argument is a boolean indicating if collapsed branches should be traversed or not. By default this option is <i>false</i> and collapsed branches are ignored.
+                  full : Retrieves a node based on a given condition. This method accepts two parameters. The first one is a callback that is called on every <a href="#tnt.tree.node">node</a> of the tree. This callback is expected to accept a <a href="#tnt.tree.node">node</a> as its argument and return <i>true</i> or <i>false</i>. The method returns the first <a href="#tnt.tree.node">node</a> for which the condition is <i>true</i>. Use <a href="node.find_all">node.find_all</a> to get all the nodes satisfying the condition. The second argument is a boolean indicating if collapsed branches should be traversed or not. By default this option is <i>false</i> so collapsed branches are ignored.
                   example : |
                     var root = tnt.tree.node (tnt.tree.parse_newick (newick));
 
@@ -226,11 +209,24 @@ api :
                         return (node.node_name() === "human");
                     });
 
+                - name : find_all
+                  path : node
+                  args : callback, boolean
+                  desc : retrieves all the nodes satisfying a given condition
+                  full : Retrieves all the nodes satisfying a given condition. This method accepts two parameters. The first one is a callback that is called on every <a href="#tnt.tree.node">node</a> of the tree. This callback is expected to accept a <a href="#tnt.tree.node">node</a> as its argument and return <i>true</i> or <i>false</i>. The method returns an array containing all the downstream <a href="#tnt.tree.node">nodes</a> for which the condition is <i>true</i>. The second argument is a boolean indicating if collapsed branches should be traversed or not. By default this option is <i>false</i> so collapsed branches are ignored.
+                  example : |
+                    var root = tnt.tree.node (tnt.tree.parse_newick (newick));
+
+                    // Using a field name
+                    var human_nodes = root.find_all (function (node) {
+                        return (node.node_name() === "human");
+                    });
+
                 - name : find_node_by_name
                   path : node
                   args : string, boolean
                   desc : retrieves a node based on its name field
-                  full : Retrieves a node based on its 'name' field. This is a special case of <a href="#find_node">find_node</a>. The first argument specifies the name of the node and the second is a boolean indicating if collapsed branches should be traversed or not (<i>false</i> by default)
+                  full : Retrieves a node based on its 'name' field. This is a specialised case of <a href="#find_node">find_node</a>. The first argument specifies the name of the node and the second is a boolean indicating if collapsed branches should be traversed or not (<i>false</i> by default)
                   example : null
 
                 - name : toggle
@@ -518,8 +514,19 @@ api :
 
              elements :
                 - name : node_display
+                  path : tree
+                  args : tnt.tree.node_display
+                  desc : specifies the shape, size and color of nodes of the tree
+                  full : Specifies the shape, size and color of nodes of the tree visualisation. It accepts an argument of type <a href="#node_display">tnt.tree.node_display</a>. If called without arguments the current value is returned. By default black circles of size 4.5 pixels are displayed.
+                  example : |
+                    var tree_vis = tnt.tree()
+                        .node_display (tnt.tree.node_display.circle()
+                            .size(5)
+                            .fill("blue")
+                        );
+
+                - name : node_display
                   path : tnt.tree
-                  class : abstract
                   args : null
                   desc : creates a new node renderer
                   full : Creates a new node renderer. This renderer defines the size and shape of the nodes in the tree. TnT offers some predefined shapes renderers for <i>circles</i> (<a href="#circle">tnt.tree.node_display.circle</a>), <i>squares</i> (<a href="#square">tnt.tree.node_display.square</a>) or <i>triangles</i> (<a href="#triangle">tnt.tree.node_display.triangle</a>). It is possible to define other shapes using its <a href="#display">display</a> method. For example, this is how <i>circle</i> nodes are defined in <a href="#circle">tnt.tree.node_display.circle</a>
@@ -633,6 +640,15 @@ api :
                         .scale (false)
                     );
              elements :
+                - name : layout
+                  path : tree
+                  args : tnt.tree.layout
+                  desc : specifies the layout to be used in the tree visualization
+                  full : Specifies the layout to be used in the tree visualization. Accepts an optional argument of type <a href="#tnt.tree.layout">tnt.tree.layout</a>. If called without arguments returns the current value.
+                  example : |
+                    var tree_vis = tnt.tree()
+                        .layout (tnt.tree.layout.vertical());
+
                 - name : scale
                   path : layout
                   args : boolean
@@ -684,9 +700,23 @@ api :
 
              elements :
                 - name : label
+                  path : tree
+                  args : tnt.tree.label
+                  desc : specifies the label to be used in each node of the tree visualisation
+                  full : Specifies the label to be used in node of the tree visualisation. Accepts an argument of type <a href="#tnt.tree.label">tnt.tree.label</a>. Returns the current value if called without arguments. By default, a <a href="#text">tnt.tree.label.text</a> is used displaying the <i>name</i> field of the node.
+                  example : |
+                    var tree_vis = tnt.tree()
+                        .data(...)
+                        .label (tnt.tree.label.text()
+                            .height(30)
+                            .text (function (node) {
+                                return node.property("scientific_name");
+                            })
+                        );
+
+                - name : label
                   path : tnt.tree
                   args : null
-                  class : abstract
                   desc : creates a new label <i>renderer</i>.
                   full : Creates a new label <i>renderer</i>. This <i>renderer</i> is called on every node to display information along the displayed node. tnt.tree.label is a general interface for labels. TnT also defines specific renderers for text and image labels.
                   example : |
@@ -698,6 +728,7 @@ api :
                             .width (...)
                             .height (...)
                         );
+
 
                 - name : display
                   path : label

@@ -6,13 +6,16 @@ theme : null
 api_toplevel : tree
 ---
 <h2>Trees</h2>
-<p><i>tnt.tree</i> creates a new tree visualization. There are several components that need to be set up in this visualization. One is the tree object to display (<i>tree.data</i> method). You can obtain a valid tree object directly from <i>newick</i> or <i>nhx</i> formats through <i>tnt.tree.parse_newick</i> or <i>tnt.tree.parse_nhx</i> respectively, or you can pass a javascript object with a tree structure. TnT converts this tree object into a <i>tnt.tree.tree</i> object to allow some tree manipulation methods to be used on the tree structure. For example:</p>
+<p><i>tnt.tree</i> creates a new tree visualisation. There are several components that need to be set up in this visualisation. One is the tree object to display. You can obtain a valid tree object directly from <i>newick</i> or <i>nhx</i> formats through <a href="#parse_newick">tnt.tree.parse_newick</a> or <a href="#parse_nhx">tnt.tree.parse_nhx</a> respectively, or you can pass a javascript object with a tree structure as shown below. Once loaded TnT Tree offers several methods to manipulate the tree as shown in the <a href="#Nodes">API</a>. For example:</p>
 
 {% highlight javascript linenos %}
 var newick = '((human, chimp),mouse)';
 var tree_vis = tnt.tree()
-              .data(tnt.tree.parse_newick(newick));
-var tree = tree.tree();
+    .data(tnt.tree.parse_newick(newick));
+
+var root = tree.tree();
+
+tree_vis(document.getElementById("mydiv"));
 {% endhighlight %}
 
-<p>In the snippet above, <i>tree_vis</i> is the tree visualization object, <i>tree</i> is a tree object with different methods on nodes to search, apply, etc... Both types of objects (tree visualizations and tree objects) have their own set of methods. See below for all the methods available for each type of object (expect for tree_objects which are pure</p>
+<p>In the snippet above, a new tree visualisation is created using <a href="#tree">tnt.tree()</a> and using the shown <i>newick</i> tree as its data. The root of the tree is then retrieved from the visualisation. At this point it is possible to update this tree with the methods explained below. It is important to realise that the tree is not <i>rendered</i> until the visualisation is executed using a <i>DOM container</i> as its argument (line 5 in the snippet above).</p>
