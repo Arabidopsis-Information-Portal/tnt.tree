@@ -67,11 +67,16 @@ gists :
      category : t
      description : Ensembl gene tree display example (using TnT Rest to retrieve the gene tree)
      id: c99e9b3cc6809904cd0d
+
+   - title : Searching Nodes
+     category : t
+     description : Example of searching nodes in a tree
+     id : d0502a9167d29b79d313
 ---
 
 <p>These examples aim to document some important parts of the API by providing simple working code examples</p>
 <ul>
 {% for gist in page.gists %}
-<li><a href=http://bl.ocks.org/emepyc/{{ gist.id }}>{{ gist.description }}</a></li>
+<li><a href=http://bl.ocks.org/emepyc/{{ gist.id }}>{{ gist.title }}</a>: {{ gist.description }}</li>
 {% endfor %}
 </ul>
