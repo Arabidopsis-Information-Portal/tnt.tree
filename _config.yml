@@ -1,7 +1,7 @@
 host: 127.0.0.1
 port: 4001
 safe: true
-highlighter: pygments
+highlighter: rouge
 baseurl : /tnt.tree
 api :
     - name : tree
