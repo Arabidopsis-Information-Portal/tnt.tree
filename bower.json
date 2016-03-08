@@ -1,0 +1,27 @@
+{
+  "name": "tnt.tree",
+  "description": "TnT tree display",
+  "main": "build/tnt.tree.min.js",
+  "version": "0.1.2",
+  "authors": [
+    "Miguel Pignatelli"
+  ],
+  "license": "Apache-2.0",
+  "keywords": [
+    "tnt",
+    "biojs",
+    "javascript",
+    "tree",
+    "phylogenetic"
+  ],
+  "homepage": "https://github.com/tntvis/tnt.tree",
+  "moduleType": [],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
